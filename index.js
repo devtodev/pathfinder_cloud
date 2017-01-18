@@ -53,7 +53,8 @@ var server = net.createServer(function(socket) { //'connection' listener
 
 app.get('/movimiento', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    res.send("myFunc(" + JSON.stringify({ "movimiento": movimiento }) + ");");
+    
+    res.send("myFunc(" + JSON.stringify({ "movimiento": req.params }) + ");");
 });
 
 
