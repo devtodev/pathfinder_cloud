@@ -53,8 +53,16 @@ var server = net.createServer(function(socket) { //'connection' listener
 
 app.get('/movimiento', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    
-    res.send("myFunc(" + JSON.stringify({ "movimiento": req.params }) + ");");
+    if (devices.length == 0)
+    {
+      res.send("Walter esta desconectado");
+      return ;
+    }
+    if (req.query["move"] == "paDelante")
+      devices[0].write("i");
+    if (req.query["move"] == "paTras")
+      devices[0].write("k");
+    res.send("Si señor!");
 });
 
 
