@@ -15,7 +15,8 @@ var conectado = 0;
 var server = net.createServer(function(socket) { //'connection' listener
   var dispositivo_id;
   var IP = socket.remoteAddress;
-  devices.push(socket);
+//  devices.push(socket);
+  devices[0] = socket; // temporal parche
   console.log('client connected '+ socket.IP);
 
   socket.on('end', function() {
