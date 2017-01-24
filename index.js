@@ -15,8 +15,7 @@ var conectado = 0;
 var server = net.createServer(function(socket) { //'connection' listener
   var dispositivo_id;
   var IP = socket.remoteAddress;
-//  devices.push(socket);
-  devices[0] = socket; // temporal parche
+  devices.push(socket);
   console.log('client connected '+ socket.IP);
 
   socket.on('end', function() {
@@ -59,20 +58,21 @@ app.get('/movimiento', function (req, res) {
       res.send("Walter esta desconectado");
       return;
     }
+    device = devices[devices.length-1];
     if (req.query["semueve"] == "padelante")
-      devices[0].write("¡{i}! OK");
+      device.write("¡{i}! OK");
     if (req.query["semueve"] == "patras")
-     devices[0].write("¡{k}! OK");
+     device.write("¡{k}! OK");
     if (req.query["semueve"] == "palaizquierda")
-     devices[0].write("¡{j}! OK");
+     device.write("¡{j}! OK");
     if (req.query["semueve"] == "paladerecha")
-     devices[0].write("¡{l}! OK");
+     device.write("¡{l}! OK");
     if (req.query["semueve"] == "aguantaaaaa")
-     devices[0].write("¡{x}! OK");
+     device.write("¡{x}! OK");
     if (req.query["semueve"] == "metelepata")
-     devices[0].write("¡{w}! OK");
+     device.write("¡{w}! OK");
     if (req.query["semueve"] == "tranquipanky")
-     devices[0].write("¡{k}! OK");
+     device.write("¡{k}! OK");
 
     res.send("Si señor!");
 });
