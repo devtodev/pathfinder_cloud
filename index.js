@@ -53,15 +53,26 @@ var server = net.createServer(function(socket) { //'connection' listener
 
 app.get('/movimiento', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    if (devices.length == 0)
+    if (devices.length < 1)
     {
       res.send("Walter esta desconectado");
-      return ;
+      return;
     }
-    if (req.query["move"] == "paDelante")
-      devices[0].write("i");
-    if (req.query["move"] == "paTras")
-      devices[0].write("k");
+    if (req.query["semueve"] == "padelante")
+      devices[0].write("¡{i}! OK");
+    if (req.query["semueve"] == "patras")
+     devices[0].write("¡{k}! OK");
+    if (req.query["semueve"] == "palaizquierda")
+     devices[0].write("¡{j}! OK");
+    if (req.query["semueve"] == "paladerecha")
+     devices[0].write("¡{l}! OK");
+    if (req.query["semueve"] == "aguantaaaaa")
+     devices[0].write("¡{x}! OK");
+    if (req.query["semueve"] == "metelepata")
+     devices[0].write("¡{w}! OK");
+    if (req.query["semueve"] == "tranquipanky")
+     devices[0].write("¡{k}! OK");
+
     res.send("Si señor!");
 });
 
@@ -79,4 +90,5 @@ var serverWeb = app.listen(WEB_PORT, function () {
   console.log("Web service listing at %s...", port);
 
 });
+
 
