@@ -15,13 +15,13 @@ var conectado = 0;
 var server = net.createServer(function(socket) { //'connection' listener
   var dispositivo_id;
   var IP = socket.remoteAddress;
-  devices.push(socket);
-  console.log('client connected '+ socket.IP);
-
-  socket.on('end', function() {
-    devices = [];
+  socket.setTimeout(40000, function(){
+	devices = [];
     console.log('client disconnected');
   });
+  
+  devices.push(socket);
+  console.log('client connected '+ socket.IP);
 
   server.getConnections(function(err, count) {
        console.log("Connections: " + count);
@@ -34,7 +34,7 @@ var server = net.createServer(function(socket) { //'connection' listener
     var params = [];
     params = str.split('|');
     // verificar cantidad de parametros
-
+/*
     if ((!(params.constructor === Array))||(params.length < 2))
     {
       socket.write(socket.dispositivo_id + '\r\n');
@@ -47,18 +47,40 @@ var server = net.createServer(function(socket) { //'connection' listener
     var valor 	       = params[2];
 
     movimiento = params[1];
+    */
   });
 
 });
 
-app.get('/movimiento', function (req, res) {
+app.get('/isOnline', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    try {
+        if (devices.length < 1)
+        {
+          res.send("offline");
+          return;
+        }
+        devices[devices.length-1].write(" ");
+    } catch (e) {
+        res.send("offline");
+    }
+    res.send("online");
+});
+
+function getDeviceClient()
+{
+    // TODO: login system
+    return devices[devices.length-1];
+}
+
+app.get('/command', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     if (devices.length < 1)
     {
       res.send("Walter esta desconectado");
       return;
     }
-    device = devices[devices.length-1];
+    var device = getDeviceClient();
     if (req.query["semueve"] == "padelante")
       device.write("¡{i}! OK");
     if (req.query["semueve"] == "patras")
@@ -72,7 +94,7 @@ app.get('/movimiento', function (req, res) {
     if (req.query["semueve"] == "metelepata")
      device.write("¡{w}! OK");
     if (req.query["semueve"] == "tranquipanky")
-     device.write("¡{k}! OK");
+     device.write("¡{s}! OK");
 
     res.send("Si señor!");
 });
@@ -91,5 +113,6 @@ var serverWeb = app.listen(WEB_PORT, function () {
   console.log("Web service listing at %s...", port);
 
 });
+
 
 
