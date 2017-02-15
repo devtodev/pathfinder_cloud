@@ -35,6 +35,10 @@ var server = net.createServer(function(socket) { //'connection' listener
     var params = [];
     params = str.split('|');
     // verificar cantidad de parametros
+<<<<<<< HEAD
+=======
+/*
+>>>>>>> ade5f299ae89f3a22d063fd23c1679ce72c5f88e
     if ((!(params.constructor === Array))||(params.length < 2))
     {
       socket.write(socket.dispositivo_id + '\r\n');
@@ -47,15 +51,19 @@ var server = net.createServer(function(socket) { //'connection' listener
     var idaccion 	      = params[2];
 
     movimiento = params[1];
+    */
   });
 
 });
 
+<<<<<<< HEAD
 app.get('/getInfo', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
 });
 
+=======
+>>>>>>> ade5f299ae89f3a22d063fd23c1679ce72c5f88e
 app.get('/isOnline', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     try {
@@ -117,3 +125,9 @@ var serverWeb = app.listen(WEB_PORT, function () {
   console.log("Web service listing at %s...", port);
 
 });
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> ade5f299ae89f3a22d063fd23c1679ce72c5f88e
