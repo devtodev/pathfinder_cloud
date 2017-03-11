@@ -11,7 +11,7 @@ var app 	= express();
 var devices = [];
 var movimiento = "offline";
 var conectado = 0;
-var data;
+var processedData;
 
 var server = net.createServer(function(socket) { //'connection' listener
   var dispositivo_id;
@@ -31,39 +31,16 @@ var server = net.createServer(function(socket) { //'connection' listener
 
   socket.on('data', function(data) {
     console.log(data.toString());
-    var str = data.toString();
-    var params = [];
-    params = str.split('|');
-    // verificar cantidad de parametros
-<<<<<<< HEAD
-=======
-/*
->>>>>>> ade5f299ae89f3a22d063fd23c1679ce72c5f88e
-    if ((!(params.constructor === Array))||(params.length < 2))
-    {
-      socket.write(socket.dispositivo_id + '\r\n');
-      socket.dispositivo_id = data;
-      return;
-    }
-    socket.dispositivo_id = params[0];
-
-    var iddispositivo     = params[1];
-    var idaccion 	      = params[2];
-
-    movimiento = params[1];
-    */
+    processedData = data.toString();
   });
 
 });
 
-<<<<<<< HEAD
 app.get('/getInfo', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    res.send(data);
+    res.send(processedData);
 });
 
-=======
->>>>>>> ade5f299ae89f3a22d063fd23c1679ce72c5f88e
 app.get('/isOnline', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     try {
@@ -78,7 +55,7 @@ app.get('/isOnline', function (req, res) {
     }
     res.send("online");
 });
-
+    
 function getDeviceClient()
 {
     // TODO: login system
@@ -125,9 +102,3 @@ var serverWeb = app.listen(WEB_PORT, function () {
   console.log("Web service listing at %s...", port);
 
 });
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> ade5f299ae89f3a22d063fd23c1679ce72c5f88e
