@@ -16,7 +16,9 @@ var processedData;
 var server = net.createServer(function(socket) { //'connection' listener
   var dispositivo_id;
   var IP = socket.remoteAddress;
-  socket.setTimeout(40000, function(){
+
+
+  socket.setTimeout(40000, function() {
 	devices = [];
     console.log('client disconnected');
   });
@@ -64,30 +66,34 @@ function getDeviceClient()
 
 app.get('/command', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    if (devices.length < 1)
-    {
-      res.send("Walter esta desconectado");
+    try {
+      if (devices.length < 1)
+      {
+        res.send("Disconnected robot");
+        return;
+      }
+    } catch (e) {
+      res.send("Disconnected robot");
       return;
     }
     var device = getDeviceClient();
     if (req.query["semueve"] == "padelante")
-      device.write("¡{i}! OK");
+      device.write("¡{i}!");
     if (req.query["semueve"] == "patras")
-     device.write("¡{k}! OK");
+     device.write("¡{k}!");
     if (req.query["semueve"] == "palaizquierda")
-     device.write("¡{j}! OK");
+     device.write("¡{j}!");
     if (req.query["semueve"] == "paladerecha")
-     device.write("¡{l}! OK");
+     device.write("¡{l}!");
     if (req.query["semueve"] == "aguantaaaaa")
-     device.write("¡{x}! OK");
+     device.write("¡{x}!");
     if (req.query["semueve"] == "metelepata")
-     device.write("¡{w}! OK");
+     device.write("¡{w}!");
     if (req.query["semueve"] == "tranquipanky")
-     device.write("¡{s}! OK");
+     device.write("¡{s}!");
 
-    res.send("Si señor!");
+    res.send("confirmed");
 });
-
 
 server.listen(SOCKET_PORT, function() { //'listening' listener
   console.log('M2M socket listening at port %s...', SOCKET_PORT);
