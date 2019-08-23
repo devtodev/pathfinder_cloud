@@ -79,16 +79,14 @@ app.get('/command', function (req, res) {
     var device = getDeviceClient();
     if (req.query["semueve"] == "padelante")
       device.write("¡{i}!");
-    if (req.query["semueve"] == "patras")
-     device.write("¡{k}!");
     if (req.query["semueve"] == "palaizquierda")
      device.write("¡{j}!");
     if (req.query["semueve"] == "paladerecha")
      device.write("¡{l}!");
     if (req.query["semueve"] == "aguantaaaaa")
-     device.write("¡{x}!");
+     device.write("¡{k}!");
     if (req.query["semueve"] == "metelepata")
-     device.write("¡{w}!");
+     device.write("¡{d}!");
     if (req.query["semueve"] == "tranquipanky")
      device.write("¡{s}!");
 
