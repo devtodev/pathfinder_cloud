@@ -66,6 +66,10 @@ function getDeviceClient()
 
 app.get('/command', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
     try {
       if (devices.length < 1)
       {

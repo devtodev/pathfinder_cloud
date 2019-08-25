@@ -1,0 +1,31 @@
+{
+  "name": "cloudrobot",
+  "version": "1.0.0",
+  "description": "cloud size of the robot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devtodev/pathfinder_cloud.git"
+  },
+  "keywords": [
+    "server",
+    "robot",
+    "node",
+    "socket",
+    "webservices"
+  ],
+  "author": "Carlos Miguens",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/devtodev/pathfinder_cloud/issues"
+  },
+  "homepage": "https://github.com/devtodev/pathfinder_cloud#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "net": "^1.0.2"
+  }
+}
