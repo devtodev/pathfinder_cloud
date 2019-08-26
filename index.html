@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+</head>
+  <script src="pixi.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<body>
+  <script type="text/javascript">
+var AppWidth = 256;
+var AppHeight = 256;
+var robotImg = "images/aegishjalmur.jpg";
+var robotForward = "images/forward.png";
+var robotTurnLeft = "images/turnLeft.png";
+var robotTurnRight = "images/turnRight.png";
+var robotStop = "images/stop.png";
+var robotServerURL = "http://127.0.0.1:8080/command?semueve=";
+
+function sendToRobot(action) {
+    $.ajax({
+        url: robotServerURL+action,
+        type: "GET",
+        crossDomain: true,
+        success: (function (data) {
+            if (data.responseText == 'Disconnected robot')
+            {
+              alert('Disconnected robot');
+            }
+        }),
+        error: (function (data) {
+            alert("Server disconnected");
+        }),
+    });
+}
+
+//Robot Interface
+function robotDo(action)
+{
+  if (action == "forward") sendToRobot("padelante");
+  if (action == "turnLeft") sendToRobot("palaizquierda");
+  if (action == "turnRight") sendToRobot("paladerecha");
+  if (action == "stop") sendToRobot("aguantaaaaa");
+}
+
+//Aliases
+let Application = PIXI.Application,
+    Container = PIXI.Container,
+    loader = PIXI.loader,
+    resources = PIXI.loader.resources,
+    TextureCache = PIXI.utils.TextureCache,
+    Sprite = PIXI.Sprite;
+//Create a Pixi Application
+let app = new Application({ 
+    width: AppWidth, 
+    height: AppHeight,                       
+    antialiasing: true, 
+    transparent: false, 
+    resolution: 1
+  }
+);
+//Add the canvas that Pixi automatically created for you to the HTML document
+document.body.appendChild(app.view);
+loader
+  .add(robotImg)
+  .add(robotForward)
+  .add(robotTurnLeft)
+  .add(robotTurnRight)
+  .add(robotStop)
+  .load(setup);
+//Define any variables that are used in more than one function
+var robot, state;
+function setup() {
+  //Create the `robot` sprite 
+  robot = new Sprite(resources[robotImg].texture);
+  robot.y = AppHeight / 2 - resources[robotImg].texture.height / 2;
+  robot.x = AppWidth / 2- resources[robotImg].texture.width / 2; 
+  robot.vx = 0;
+  robot.vy = 0;
+  app.stage.addChild(robot);
+  //Capture the keyboard arrow keys
+  let left = keyboard(37),
+      up = keyboard(38),
+      right = keyboard(39),
+      down = keyboard(40);
+  //Left arrow key `press` method
+  left.press = () => {
+    robot.texture = resources[robotTurnLeft].texture;
+    robotDo("turnLeft");
+  };
+  
+  //Left arrow key `release` method
+  left.release = () => {
+    robot.texture = resources[robotStop].texture;
+  };
+  //Up
+  up.press = () => {
+    robotDo("forward");
+    robot.texture = resources[robotForward].texture;
+  };
+  up.release = () => {
+    robot.texture = resources[robotStop].texture;
+  };
+  //Right
+  right.press = () => {
+    robotDo("turnRight");
+    robot.texture = resources[robotTurnRight].texture;
+  };
+  right.release = () => {
+    robot.texture = resources[robotStop].texture;
+  };
+  //Down
+  down.press = () => {
+    robotDo("stop");
+    robot.texture = resources[robotStop].texture;
+  };
+  down.release = () => {
+    robot.texture = resources[robotStop].texture;
+  };
+  //Set the game state
+  state = play;
+ 
+  //Start the game loop 
+  app.ticker.add(delta => gameLoop(delta));
+}
+function gameLoop(delta){
+  //Update the current game state:
+  state(delta);
+}
+function play(delta) {
+  //Use the robot's velocity to make it move
+  robot.x += robot.vx;
+  robot.y += robot.vy
+}
+//The `keyboard` helper function
+function keyboard(keyCode) {
+  var key = {};
+  key.code = keyCode;
+  key.isDown = false;
+  key.isUp = true;
+  key.press = undefined;
+  key.release = undefined;
+  //The `downHandler`
+  key.downHandler = event => {
+    if (event.keyCode === key.code) {
+      if (key.isUp && key.press) key.press();
+      key.isDown = true;
+      key.isUp = false;
+    }
+    event.preventDefault();
+  };
+  //The `upHandler`
+  key.upHandler = event => {
+    if (event.keyCode === key.code) {
+      if (key.isDown && key.release) key.release();
+      key.isDown = false;
+      key.isUp = true;
+    }
+    event.preventDefault();
+  };
+  //Attach event listeners
+  window.addEventListener(
+    "keydown", key.downHandler.bind(key), false
+  );
+  window.addEventListener(
+    "keyup", key.upHandler.bind(key), false
+  );
+  return key;
+}
+
+
+  </script>
+</body>
+</html>

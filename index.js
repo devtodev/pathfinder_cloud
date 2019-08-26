@@ -38,6 +38,13 @@ var server = net.createServer(function(socket) { //'connection' listener
 
 });
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+
 app.get('/getInfo', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.send(processedData);
@@ -70,14 +77,20 @@ app.get('/command', function (req, res) {
     res.setHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+    reply = {
+      error: false,
+      code: 200,
+      message: 'Disconnected robot'
+     };
+
     try {
       if (devices.length < 1)
       {
-        res.send("Disconnected robot");
+        res.send(reply);
         return;
       }
     } catch (e) {
-      res.send("Disconnected robot");
+      res.send(reply);
       return;
     }
     var device = getDeviceClient();
@@ -94,7 +107,8 @@ app.get('/command', function (req, res) {
     if (req.query["semueve"] == "tranquipanky")
      device.write("¡{s}!");
 
-    res.send("confirmed");
+    reply.message = "confirmed";
+    res.send(reply);
 });
 
 server.listen(SOCKET_PORT, function() { //'listening' listener
