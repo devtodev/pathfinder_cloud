@@ -8,14 +8,38 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <body>
   <script type="text/javascript">
-var AppWidth = 256;
-var AppHeight = 256;
+var AppWidth = 1200;
+var AppHeight = 800;
+var serverDown = "images/serverDown.png";
+var noRobot = "images/noRobot.png";
 var robotImg = "images/aegishjalmur.jpg";
 var robotForward = "images/forward.png";
 var robotTurnLeft = "images/turnLeft.png";
 var robotTurnRight = "images/turnRight.png";
 var robotStop = "images/stop.png";
 var robotServerURL = "http://127.0.0.1:8080/command?semueve=";
+const status = {
+  SERVERDOWN : 'serverdown',
+  NOROBOT: 'norobot',
+  ALLRIGHT: 'allright'
+}
+var systemStatus = status.SERVERDOWN;
+var robotCurrentAction = robotStop;
+
+function setRobotImg(image)
+{
+  if (systemStatus == status.SERVERDOWN)
+  {
+    image = serverDown;
+  }
+  if (systemStatus == status.NOROBOT)
+  {
+    image = noRobot;
+  }
+  robot.y = AppHeight / 2 - resources[image].texture.height / 2;
+  robot.x = AppWidth / 2- resources[image].texture.width / 2; 
+  robot.texture = resources[image].texture;
+}
 
 function sendToRobot(action) {
     $.ajax({
@@ -23,24 +47,47 @@ function sendToRobot(action) {
         type: "GET",
         crossDomain: true,
         success: (function (data) {
-            if (data.responseText == 'Disconnected robot')
+            if (data.message != 'Disconnected robot')
             {
-              alert('Disconnected robot');
+              systemStatus = status.NOROBOT;
+              setRobotImg(noRobot);
+            } else {
+              systemStatus = status.ALLRIGHT;
             }
         }),
         error: (function (data) {
-            alert("Server disconnected");
+            systemStatus = status.SERVERDOWN;
+            setRobotImg(serverDown);
         }),
     });
 }
-
 //Robot Interface
 function robotDo(action)
 {
-  if (action == "forward") sendToRobot("padelante");
-  if (action == "turnLeft") sendToRobot("palaizquierda");
-  if (action == "turnRight") sendToRobot("paladerecha");
-  if (action == "stop") sendToRobot("aguantaaaaa");
+  if ((robotCurrentAction != robotStop) && (action == robotStop)) 
+  {
+    setRobotImg(robotStop);
+    sendToRobot("aguantaaaaa");
+    robotCurrentAction = action;
+  }
+  if ((robotCurrentAction == robotStop) && (action == robotForward)) 
+  {
+    setRobotImg(robotForward);
+    sendToRobot("padelante");
+    robotCurrentAction = action;
+  }
+  if ((robotCurrentAction == robotStop) && (action == robotTurnLeft)) 
+  {
+    setRobotImg(robotTurnLeft);
+    sendToRobot("palaizquierda");
+    robotCurrentAction = action;
+  }
+  if ((robotCurrentAction == robotStop) && (action == robotTurnRight)) 
+  {
+    setRobotImg(robotTurnRight);
+    sendToRobot("paladerecha");
+    robotCurrentAction = action;
+  }
 }
 
 //Aliases
@@ -67,6 +114,8 @@ loader
   .add(robotTurnLeft)
   .add(robotTurnRight)
   .add(robotStop)
+  .add(noRobot)
+  .add(serverDown)
   .load(setup);
 //Define any variables that are used in more than one function
 var robot, state;
@@ -85,37 +134,32 @@ function setup() {
       down = keyboard(40);
   //Left arrow key `press` method
   left.press = () => {
-    robot.texture = resources[robotTurnLeft].texture;
-    robotDo("turnLeft");
+    robotDo(robotTurnLeft);
   };
-  
   //Left arrow key `release` method
   left.release = () => {
-    robot.texture = resources[robotStop].texture;
+    robotDo(robotStop);
   };
   //Up
   up.press = () => {
-    robotDo("forward");
-    robot.texture = resources[robotForward].texture;
+    robotDo(robotForward);
   };
   up.release = () => {
-    robot.texture = resources[robotStop].texture;
+    robotDo(robotStop);
   };
   //Right
   right.press = () => {
-    robotDo("turnRight");
-    robot.texture = resources[robotTurnRight].texture;
+    robotDo(robotTurnRight);
   };
   right.release = () => {
-    robot.texture = resources[robotStop].texture;
+    robotDo(robotStop);
   };
   //Down
   down.press = () => {
-    robotDo("stop");
-    robot.texture = resources[robotStop].texture;
+    robotDo(robotStop);
   };
   down.release = () => {
-    robot.texture = resources[robotStop].texture;
+    robotDo(robotStop);
   };
   //Set the game state
   state = play;
@@ -167,7 +211,6 @@ function keyboard(keyCode) {
   );
   return key;
 }
-
 
   </script>
 </body>
