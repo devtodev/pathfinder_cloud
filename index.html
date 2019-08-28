@@ -47,7 +47,7 @@ function sendToRobot(action) {
         type: "GET",
         crossDomain: true,
         success: (function (data) {
-            if (data.message != 'Disconnected robot')
+            if (data.message == 'Disconnected robot')
             {
               systemStatus = status.NOROBOT;
               setRobotImg(noRobot);
