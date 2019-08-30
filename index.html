@@ -2,14 +2,15 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Hello World</title>
+  <title>Nac & Bot</title>
 </head>
   <script src="pixi.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <body>
+<br />
   <script type="text/javascript">
-var AppWidth = 1200;
-var AppHeight = 800;
+var AppWidth = 350;
+var AppHeight = 400;
 var serverDown = "images/serverDown.png";
 var noRobot = "images/noRobot.png";
 var robotImg = "images/aegishjalmur.jpg";
@@ -17,7 +18,11 @@ var robotForward = "images/forward.png";
 var robotTurnLeft = "images/turnLeft.png";
 var robotTurnRight = "images/turnRight.png";
 var robotStop = "images/stop.png";
-var robotServerURL = "http://127.0.0.1:8080/command?semueve=";
+var robotServerURL = "http://127.0.0.1:8080/";
+var robotCommandURL = "command?semueve=";
+var robotGetInfoURL = "getInfo";
+var robotTelemetry = "";
+
 const status = {
   SERVERDOWN : 'serverdown',
   NOROBOT: 'norobot',
@@ -43,7 +48,7 @@ function setRobotImg(image)
 
 function sendToRobot(action) {
     $.ajax({
-        url: robotServerURL+action,
+        url: robotServerURL+robotCommandURL+action,
         type: "GET",
         crossDomain: true,
         success: (function (data) {
@@ -56,6 +61,29 @@ function sendToRobot(action) {
             }
         }),
         error: (function (data) {
+            systemStatus = status.SERVERDOWN;
+            setRobotImg(serverDown);
+        }),
+    });
+}
+
+function readRobotStatus() {
+    $.ajax({
+        url: robotServerURL+robotGetInfoURL,
+        type: "GET",
+        crossDomain: true,
+        success: (function (data) {
+            if (data.message == 'Disconnected robot')
+            {
+              systemStatus = status.NOROBOT;
+              setRobotImg(noRobot);
+            } else {
+              systemStatus = status.ALLRIGHT;
+              robotTelemetry = JSON.parse(data.message);
+            }
+        }),
+        error: (function (data) {
+            console.log(data);
             systemStatus = status.SERVERDOWN;
             setRobotImg(serverDown);
         }),
@@ -106,6 +134,13 @@ let app = new Application({
     resolution: 1
   }
 );
+// text
+const textConsole = new PIXI.Text('Connecting...',{font: "bold 18px Roboto", fill: 'white'});
+textConsole.x = 10;
+textConsole.y = 10;
+
+app.stage.addChild(textConsole);
+
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 loader
@@ -211,6 +246,33 @@ function keyboard(keyCode) {
   );
   return key;
 }
+
+function updateStatus()
+{
+  readRobotStatus();
+  if (systemStatus == status.ALLRIGHT)
+  {
+    textConsole.text = '';
+    for (var property in robotTelemetry) {
+      if (typeof(robotTelemetry[property]) === 'object' && robotTelemetry[property] !== null)
+      {
+        textConsole.text += property+": [";
+        for (var subProperty in robotTelemetry[property]) {
+          textConsole.text += subProperty + ': ' + robotTelemetry[property][subProperty]+' ';
+        }
+        textConsole.text += "]\n";
+      } else {
+        textConsole.text += property + ': ' + robotTelemetry[property]+'\n ';
+      }
+    }
+
+   // robotTextStatus.Text = robotTelemetry;
+  }
+}
+
+let robotTextStatus = new PIXI.Text(systemStatus,{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'left'});
+
+setInterval(updateStatus, 100);
 
   </script>
 </body>

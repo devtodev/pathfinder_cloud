@@ -9,9 +9,7 @@ var express = require('express');
 var app 	= express();
 
 var devices = [];
-var movimiento = "offline";
-var conectado = 0;
-var processedData;
+var telemetry;
 
 var server = net.createServer(function(socket) { //'connection' listener
   var dispositivo_id;
@@ -32,8 +30,9 @@ var server = net.createServer(function(socket) { //'connection' listener
   });
 
   socket.on('data', function(data) {
+    // {"temperature" : "35.9", accel : { "x" : " 0.1", "y" : " 0.5", "z" : " 9.8",  }, gyro : { "x" : "0", "y" : "0", "z" : "0",  }, "battery" : " 8.3", "jack" : "12.7", } 
     console.log(data.toString());
-    processedData = data.toString();
+    telemetry = data.toString();  // JSON.parse();
   });
 
 });
@@ -46,8 +45,17 @@ app.use(function(req, res, next) {
 
 
 app.get('/getInfo', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(processedData);
+  reply = {
+    error: false,
+    code: 200,
+    message: telemetry,
+  };
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  res.setHeader('Content-Type', 'application/json');
+  res.send(reply);
 });
 
 app.get('/isOnline', function (req, res) {
