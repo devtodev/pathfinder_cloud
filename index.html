@@ -23,6 +23,11 @@ var robotServerURL = "http://127.0.0.1:8080/";
 var robotCommandURL = "command?semueve=";
 var robotGetInfoURL = "getInfo";
 var robotTelemetry = "";
+var robotCameraRight = "images/cameraRight.png";
+var robotCameraHalfRight = "images/cameraHalfRight.png";
+var robotCameraCenter = "images/cameraCenter.png";
+var robotCameraLeft = "images/cameraLeft.png";
+var robotCameraHalfLeft = "images/cameraHalfLeft.png";
 
 const status = {
   SERVERDOWN : 'serverdown',
@@ -31,6 +36,7 @@ const status = {
 }
 var systemStatus = status.SERVERDOWN;
 var robotCurrentAction = robotStop;
+var cameraPosition = robotCameraCenter;
 
 function setRobotImg(image)
 {
@@ -117,6 +123,38 @@ function robotDo(action)
     sendToRobot("paladerecha");
     robotCurrentAction = action;
   }
+
+  if (action == robotCameraRight) 
+  {
+//    setRobotImg(robotCameraRight);
+    sendToRobot("cam_r");
+    camperaPosition = action;
+  }
+  if (action == robotCameraHalfRight) 
+  {
+//    setRobotImg(action);
+    sendToRobot("cam_hr");
+    camperaPosition = action;
+  }
+  if (action == robotCameraHalfLeft) 
+  {
+//    setRobotImg(action);
+    sendToRobot("cam_hl");
+    camperaPosition = action;
+  }
+
+  if (action == robotCameraLeft) 
+  {
+   // setRobotImg(action);
+    sendToRobot("cam_l");
+    camperaPosition = action;
+  }
+  if (action == robotCameraCenter) 
+  {
+  //  setRobotImg(action);
+    sendToRobot("cam_c");
+    camperaPosition = action;
+  }
 }
 
 //Aliases
@@ -167,7 +205,28 @@ function setup() {
   let left = keyboard(37),
       up = keyboard(38),
       right = keyboard(39),
-      down = keyboard(40);
+      down = keyboard(40),
+      one = keyboard(49),
+      two = keyboard(50),
+      three = keyboard(51),
+      four = keyboard(52),
+      five = keyboard(53);
+  //Numbers keys `press` method
+  one.press = () => {
+    robotDo(robotCameraLeft);
+  };
+  two.press = () => {
+    robotDo(robotCameraHalfLeft);
+  };
+  three.press = () => {
+    robotDo(robotCameraCenter);
+  };
+  four.press = () => {
+    robotDo(robotCameraHalfRight);
+  };
+  five.press = () => {
+    robotDo(robotCameraRight);
+  };
   //Left arrow key `press` method
   left.press = () => {
     robotDo(robotTurnLeft);
@@ -192,9 +251,6 @@ function setup() {
   };
   //Down
   down.press = () => {
-    robotDo(robotStop);
-  };
-  down.release = () => {
     robotDo(robotStop);
   };
   //Set the game state

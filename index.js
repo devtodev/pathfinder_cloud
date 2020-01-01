@@ -31,7 +31,7 @@ var server = net.createServer(function(socket) { //'connection' listener
 
   socket.on('data', function(data) {
     // {"temperature" : "35.9", accel : { "x" : " 0.1", "y" : " 0.5", "z" : " 9.8",  }, gyro : { "x" : "0", "y" : "0", "z" : "0",  }, "battery" : " 8.3", "jack" : "12.7", } 
-    console.log(data.toString());
+//    console.log(data.toString());
     telemetry = data.toString();  // JSON.parse();
   });
 
@@ -114,7 +114,17 @@ app.get('/command', function (req, res) {
      device.write("¡{d}!");
     if (req.query["semueve"] == "tranquipanky")
      device.write("¡{s}!");
-
+    if (req.query["semueve"] == "cam_r")
+     device.write("¡{5}!");
+    if (req.query["semueve"] == "cam_hr")
+     device.write("¡{4}!");
+    if (req.query["semueve"] == "cam_c")
+     device.write("¡{3}!");
+    if (req.query["semueve"] == "cam_hl")
+     device.write("¡{2}!");
+    if (req.query["semueve"] == "cam_l")
+     device.write("¡{1}!");
+    console.log(req.query["semueve"]);
     reply.message = "confirmed";
     res.send(reply);
 });
